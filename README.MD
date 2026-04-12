@@ -17,7 +17,7 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 - `stellar:testnet` provides low-friction testing with programmable token payments.
 - Facilitator-based verification/settlement patterns are represented in the backend integration.
 
-## Features (Phase 1–3)
+## Features (Phase 1–4)
 
 - TypeScript monorepo with npm workspaces.
 - Express API with provider catalog and protected paid routes.
@@ -27,6 +27,7 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 - Analytics endpoint for total spend and category breakdown.
 - Agent CLI with commands for search/news/scrape.
 - Deterministic `DEMO_MODE` fallback for hackathon reliability.
+- Premium dark React dashboard with provider comparison, paid query workspace, results, and spend analytics.
 
 ## Architecture overview
 
@@ -41,6 +42,10 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 - `apps/agent-client`
   - CLI commands for paid requests (`search`, `news`, `scrape`)
   - Demo script (`npm run demo --workspace @query402/agent-client`)
+- `apps/web`
+  - React + TypeScript + Vite + Tailwind frontend
+  - Query workspace, provider cards, demo toggle, result panel
+  - Usage and spend analytics dashboard
 - `packages/shared`
   - Shared Zod schemas and types used by API + client
 
@@ -51,6 +56,7 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 ├─ apps/
 │  ├─ api/
 │  └─ agent-client/
+│  └─ web/
 ├─ packages/
 │  └─ shared/
 ├─ .env.example
@@ -71,6 +77,7 @@ Copy `.env.example` to `.env` and fill values:
 - `DEMO_CLIENT_PUBLIC_KEY`
 - `PORT_API`
 - `API_BASE_URL`
+- `VITE_API_BASE_URL`
 - `DEMO_MODE` (`true` for deterministic demo reliability)
 - Optional keys: `BRAVE_API_KEY`, `SERPAPI_API_KEY`, `NEWS_API_KEY`
 
@@ -94,6 +101,14 @@ npm run build
 ```bash
 npm run dev:api
 ```
+
+## Run frontend dashboard
+
+```bash
+npm run dev:web
+```
+
+Open: `http://localhost:5173`
 
 Or production build:
 
@@ -129,12 +144,12 @@ npm run demo:agent
 
 ## Demo flow (2–3 minutes)
 
-1. Start API.
-2. Show provider catalog at `/api/providers`.
-3. Trigger one paid CLI search request.
-4. Show response payload with provider, price, trace.
-5. Open `/api/analytics` and show spend totals + breakdown.
-6. Run CLI demo script for search/news/scrape sequence.
+1. Start API and Web.
+2. Dashboard’da provider kartlarını ve fiyatları göster.
+3. Search mode’da “Run paid query” tetikle.
+4. Result panelinde payment trace + structured sonuçları göster.
+5. Usage panelinde spend breakdown’u anlat.
+6. CLI demo ile ikinci kanal doğrulaması yap.
 
 ## What is mocked vs real
 
@@ -178,4 +193,4 @@ npm run demo:agent
 - [x] Agent CLI paid requests
 - [x] Usage + spend analytics
 - [x] Env + setup docs
-- [ ] Frontend dashboard (next phase)
+- [x] Frontend dashboard
