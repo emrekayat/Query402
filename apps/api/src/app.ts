@@ -8,7 +8,11 @@ import { logger } from "./lib/logger.js";
 
 export const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["payment-required", "payment-response", "x-payment-response"]
+  })
+);
 app.use(express.json());
 app.use((req, _res, next) => {
   logger.info({ method: req.method, url: req.url }, "incoming request");

@@ -551,6 +551,72 @@ body {
   box-shadow: 0 0 0 2px rgba(92, 223, 255, 0.18);
 }
 
+.payment-mode-switch {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.payment-mode-btn {
+  border: 1px solid rgba(124, 157, 197, 0.26);
+  background: rgba(10, 15, 24, 0.76);
+  color: #a9c0dc;
+  border-radius: 10px;
+  padding: 0.42rem 0.62rem;
+  font-size: 0.73rem;
+  cursor: pointer;
+}
+
+.payment-mode-btn.active {
+  border-color: rgba(88, 222, 255, 0.56);
+  color: #eaf3ff;
+  background: linear-gradient(130deg, rgba(72, 217, 255, 0.24), rgba(184, 110, 255, 0.18));
+}
+
+.wallet-hint {
+  margin: 0;
+  color: #8ea6c4;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.wallet-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.wallet-btn {
+  border: 1px solid rgba(90, 220, 255, 0.5);
+  background: linear-gradient(130deg, rgba(72, 217, 255, 0.24), rgba(184, 110, 255, 0.18));
+  color: #eaf3ff;
+  border-radius: 10px;
+  padding: 0.4rem 0.62rem;
+  font-size: 0.73rem;
+  cursor: pointer;
+}
+
+.wallet-btn.ghost {
+  border-color: rgba(126, 157, 196, 0.3);
+  background: rgba(10, 15, 24, 0.76);
+  color: #a9c0dc;
+}
+
+.wallet-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.wallet-status {
+  font-size: 0.72rem;
+  color: #9db4cf;
+}
+
+.wallet-status.connected {
+  color: #9cffdb;
+}
+
 .provider-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

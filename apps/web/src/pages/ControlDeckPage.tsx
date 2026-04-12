@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { ProviderDefinition, QueryMode } from "@query402/shared";
 import { Activity, CircleDollarSign, Gauge, Home, Radar, ReceiptText, Sparkles, TerminalSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import { requestAccess } from "@stellar/freighter-api";
 import type { AnalyticsResponse, PaidQueryResponse } from "../types.js";
 import { API_BASE_URL, fetchJson, money } from "../lib/api.js";
+import { runWalletPaidQuery } from "../lib/x402.js";
 
 const modeLabels: Record<QueryMode, string> = {
   search: "Search",
@@ -17,8 +19,12 @@ const modeDefaultProvider: Record<QueryMode, string> = {
   scrape: "scrape.page"
 };
 
+type PaymentMode = "sponsored" | "wallet";
+
 export default function ControlDeckPage() {
   const [mode, setMode] = useState<QueryMode>("search");
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>("sponsored");
+  const [connectedWalletAddress, setConnectedWalletAddress] = useState("");
   const [queryInput, setQueryInput] = useState("latest stellar x402 updates");
   const [urlInput, setUrlInput] = useState("https://developers.stellar.org");
   const [providers, setProviders] = useState<ProviderDefinition[]>([]);
@@ -39,6 +45,29 @@ export default function ControlDeckPage() {
   );
 
   const activeInput = mode === "scrape" ? urlInput : queryInput;
+  const walletConnected = connectedWalletAddress.length > 0;
+
+  function shortAddress(address: string) {
+    if (address.length < 12) {
+      return address;
+    }
+    return `${address.slice(0, 6)}...${address.slice(-6)}`;
+  }
+
+  async function connectWallet() {
+    const result = await requestAccess();
+    if (result.error || !result.address) {
+      throw new Error(result.error ? JSON.stringify(result.error) : "Freighter wallet connection failed");
+    }
+
+    setConnectedWalletAddress(result.address);
+    setError(null);
+  }
+
+  function disconnectWallet() {
+    setConnectedWalletAddress("");
+    setError(null);
+  }
 
   async function refreshMetrics() {
     const data = await fetchJson<AnalyticsResponse>(`${API_BASE_URL}/api/analytics`);
@@ -70,16 +99,26 @@ export default function ControlDeckPage() {
     setError(null);
 
     try {
-      const data = await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/paid/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode,
-          provider: selectedProvider,
-          query: mode === "scrape" ? undefined : queryInput,
-          url: mode === "scrape" ? urlInput : undefined
-        })
-      });
+      const data =
+        paymentMode === "sponsored"
+          ? await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/paid/run`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                mode,
+                provider: selectedProvider,
+                query: mode === "scrape" ? undefined : queryInput,
+                url: mode === "scrape" ? urlInput : undefined
+              })
+            })
+          : await runWalletPaidQuery({
+              apiBaseUrl: API_BASE_URL,
+              mode,
+              provider: selectedProvider,
+              query: mode === "scrape" ? undefined : queryInput,
+              url: mode === "scrape" ? urlInput : undefined,
+              walletAddress: connectedWalletAddress
+            });
 
       setResult(data);
       await refreshMetrics();
@@ -146,6 +185,53 @@ export default function ControlDeckPage() {
             ) : (
               <input value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder="latest stellar x402 updates" />
             )}
+
+            <label>PAYMENT MODE</label>
+            <div className="payment-mode-switch">
+              <button
+                type="button"
+                className={paymentMode === "sponsored" ? "payment-mode-btn active" : "payment-mode-btn"}
+                onClick={() => setPaymentMode("sponsored")}
+              >
+                Sponsored tx
+              </button>
+              <button
+                type="button"
+                className={paymentMode === "wallet" ? "payment-mode-btn active" : "payment-mode-btn"}
+                onClick={() => setPaymentMode("wallet")}
+              >
+                Wallet (non-custodial)
+              </button>
+            </div>
+
+            {paymentMode === "wallet" ? (
+              <>
+                <label>WALLET CONNECTION</label>
+                <div className="wallet-row">
+                  <button
+                    type="button"
+                    className="wallet-btn"
+                    onClick={() => {
+                      connectWallet().catch((walletError) => {
+                        setError(walletError instanceof Error ? walletError.message : "Wallet connection failed");
+                      });
+                    }}
+                    disabled={walletConnected}
+                  >
+                    Connect Wallet
+                  </button>
+                  <button type="button" className="wallet-btn ghost" onClick={disconnectWallet} disabled={!walletConnected}>
+                    Disconnect
+                  </button>
+                  <span className={walletConnected ? "wallet-status connected" : "wallet-status"}>
+                    {walletConnected ? `Connected: ${shortAddress(connectedWalletAddress)}` : "Not connected"}
+                  </span>
+                </div>
+                <p className="wallet-hint">Freighter extension ile bağlanıp imza doğrudan cüzdanda atılır.</p>
+              </>
+            ) : (
+              <p className="wallet-hint">Sponsorlu modda ödeme backend tarafından gerçekleştirilir.</p>
+            )}
           </div>
 
           <div className="provider-strip">
@@ -172,8 +258,16 @@ export default function ControlDeckPage() {
             <div>
               <p className="action-label">Provider lock</p>
               <p className="action-value">{selectedProviderDetails?.name ?? "Choose provider"}</p>
+              <p className="action-label">
+                Mode: {paymentMode === "sponsored" ? "Sponsored" : walletConnected ? "Wallet Connected" : "Wallet Not Connected"}
+              </p>
             </div>
-            <button className="run-btn" onClick={runPaidQuery} disabled={isLoading || !selectedProvider} type="button">
+            <button
+              className="run-btn"
+              onClick={runPaidQuery}
+              disabled={isLoading || !selectedProvider || (paymentMode === "wallet" && !walletConnected)}
+              type="button"
+            >
               {isLoading ? "Executing..." : "Run paid query"}
               <TerminalSquare size={16} />
             </button>
@@ -278,7 +372,7 @@ export default function ControlDeckPage() {
 
           <div className="script-panel">
             <h3>Live payload preview</h3>
-            <pre>{JSON.stringify({ mode, provider: selectedProvider, input: activeInput }, null, 2)}</pre>
+            <pre>{JSON.stringify({ mode, paymentMode, provider: selectedProvider, input: activeInput }, null, 2)}</pre>
           </div>
         </aside>
       </main>
