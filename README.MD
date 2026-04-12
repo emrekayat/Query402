@@ -175,11 +175,11 @@ Notes:
 ## Demo flow (2–3 minutes)
 
 1. Start API and Web.
-2. Dashboard'da provider cards, price, quality, latency alanlarını göster.
-3. `search.basic` seçip `latest stellar x402 updates` sorgusunu çalıştır.
-4. Result panelinde provider, price, trace id ve timestamp alanlarını göster.
-5. Analytics panelinde total spend ve category breakdown'u anlat.
-6. Terminalde CLI ile aynı sistemi ikinci kanaldan doğrula.
+2. In the dashboard, show provider cards with price, quality, and latency fields.
+3. Select `search.basic` and run the query `latest stellar x402 updates`.
+4. In the result panel, show provider, price, trace id, and timestamp fields.
+5. In the analytics panel, explain total spend and category breakdown.
+6. In the terminal, verify the same system through the CLI as a second channel.
 
 ## Demo rehearsal runbook (judge-safe)
 

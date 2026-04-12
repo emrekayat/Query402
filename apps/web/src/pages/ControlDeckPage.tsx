@@ -19,11 +19,8 @@ const modeDefaultProvider: Record<QueryMode, string> = {
   scrape: "scrape.page"
 };
 
-type PaymentMode = "sponsored" | "wallet";
-
 export default function ControlDeckPage() {
   const [mode, setMode] = useState<QueryMode>("search");
-  const [paymentMode, setPaymentMode] = useState<PaymentMode>("sponsored");
   const [connectedWalletAddress, setConnectedWalletAddress] = useState("");
   const [queryInput, setQueryInput] = useState("latest stellar x402 updates");
   const [urlInput, setUrlInput] = useState("https://developers.stellar.org");
@@ -100,8 +97,16 @@ export default function ControlDeckPage() {
 
     try {
       const data =
-        paymentMode === "sponsored"
-          ? await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/paid/run`, {
+        walletConnected
+          ? await runWalletPaidQuery({
+              apiBaseUrl: API_BASE_URL,
+              mode,
+              provider: selectedProvider,
+              query: mode === "scrape" ? undefined : queryInput,
+              url: mode === "scrape" ? urlInput : undefined,
+              walletAddress: connectedWalletAddress
+            })
+          : await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/paid/run`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -110,14 +115,6 @@ export default function ControlDeckPage() {
                 query: mode === "scrape" ? undefined : queryInput,
                 url: mode === "scrape" ? urlInput : undefined
               })
-            })
-          : await runWalletPaidQuery({
-              apiBaseUrl: API_BASE_URL,
-              mode,
-              provider: selectedProvider,
-              query: mode === "scrape" ? undefined : queryInput,
-              url: mode === "scrape" ? urlInput : undefined,
-              walletAddress: connectedWalletAddress
             });
 
       setResult(data);
@@ -144,13 +141,36 @@ export default function ControlDeckPage() {
             <Sparkles size={13} /> Query402 Control Deck
           </p>
           <h1>Agentic internet access, paid per request.</h1>
-          <p className="subtitle">Stellar testnet üzerinde x402 akışıyla provider seç, query başına öde, izi anında denetle.</p>
+          <p className="subtitle">On Stellar testnet, pick a provider through the x402 flow, pay per query, and audit the trace instantly.</p>
           <Link className="ghost-btn topbar-link" to="/">
             <Home size={14} /> Back to landing
           </Link>
         </div>
 
         <div className="bridge-right lift-in delay-1">
+          <div className="control-wallet-bar">
+            <div className="wallet-row">
+              <button
+                type="button"
+                className="wallet-btn"
+                onClick={() => {
+                  connectWallet().catch((walletError) => {
+                    setError(walletError instanceof Error ? walletError.message : "Wallet connection failed");
+                  });
+                }}
+                disabled={walletConnected}
+              >
+                Connect Wallet
+              </button>
+              <button type="button" className="wallet-btn ghost" onClick={disconnectWallet} disabled={!walletConnected}>
+                Disconnect
+              </button>
+              <span className={walletConnected ? "wallet-status connected" : "wallet-status"}>
+                {walletConnected ? `Connected: ${shortAddress(connectedWalletAddress)}` : "Not connected"}
+              </span>
+            </div>
+          </div>
+
           <StatTile label="Queries" value={String(analytics?.totalQueries ?? 0)} icon={<Activity size={16} />} />
           <StatTile label="Spend" value={money(analytics?.totalSpendUsd ?? 0)} icon={<CircleDollarSign size={16} />} />
           <StatTile label="Search" value={money(analytics?.spendByCategory.search ?? 0)} icon={<Radar size={16} />} />
@@ -188,50 +208,11 @@ export default function ControlDeckPage() {
 
             <label>PAYMENT MODE</label>
             <div className="payment-mode-switch">
-              <button
-                type="button"
-                className={paymentMode === "sponsored" ? "payment-mode-btn active" : "payment-mode-btn"}
-                onClick={() => setPaymentMode("sponsored")}
-              >
+              <button type="button" className="payment-mode-btn active" disabled>
                 Sponsored tx
               </button>
-              <button
-                type="button"
-                className={paymentMode === "wallet" ? "payment-mode-btn active" : "payment-mode-btn"}
-                onClick={() => setPaymentMode("wallet")}
-              >
-                Wallet (non-custodial)
-              </button>
             </div>
-
-            {paymentMode === "wallet" ? (
-              <>
-                <label>WALLET CONNECTION</label>
-                <div className="wallet-row">
-                  <button
-                    type="button"
-                    className="wallet-btn"
-                    onClick={() => {
-                      connectWallet().catch((walletError) => {
-                        setError(walletError instanceof Error ? walletError.message : "Wallet connection failed");
-                      });
-                    }}
-                    disabled={walletConnected}
-                  >
-                    Connect Wallet
-                  </button>
-                  <button type="button" className="wallet-btn ghost" onClick={disconnectWallet} disabled={!walletConnected}>
-                    Disconnect
-                  </button>
-                  <span className={walletConnected ? "wallet-status connected" : "wallet-status"}>
-                    {walletConnected ? `Connected: ${shortAddress(connectedWalletAddress)}` : "Not connected"}
-                  </span>
-                </div>
-                <p className="wallet-hint">Freighter extension ile bağlanıp imza doğrudan cüzdanda atılır.</p>
-              </>
-            ) : (
-              <p className="wallet-hint">Sponsorlu modda ödeme backend tarafından gerçekleştirilir.</p>
-            )}
+            <p className="wallet-hint">If a wallet is connected, payment is made with the wallet; otherwise, the sponsored flow is used.</p>
           </div>
 
           <div className="provider-strip">
@@ -258,16 +239,9 @@ export default function ControlDeckPage() {
             <div>
               <p className="action-label">Provider lock</p>
               <p className="action-value">{selectedProviderDetails?.name ?? "Choose provider"}</p>
-              <p className="action-label">
-                Mode: {paymentMode === "sponsored" ? "Sponsored" : walletConnected ? "Wallet Connected" : "Wallet Not Connected"}
-              </p>
+              <p className="action-label">Mode: {walletConnected ? "Wallet Connected" : "Sponsored"}</p>
             </div>
-            <button
-              className="run-btn"
-              onClick={runPaidQuery}
-              disabled={isLoading || !selectedProvider || (paymentMode === "wallet" && !walletConnected)}
-              type="button"
-            >
+            <button className="run-btn" onClick={runPaidQuery} disabled={isLoading || !selectedProvider} type="button">
               {isLoading ? "Executing..." : "Run paid query"}
               <TerminalSquare size={16} />
             </button>
@@ -282,7 +256,7 @@ export default function ControlDeckPage() {
             </div>
 
             {!result ? (
-              <p className="empty-note">Sonuç bekleniyor. Sol panelden query başlat.</p>
+              <p className="empty-note">Waiting for results. Start a query from the left panel.</p>
             ) : (
               <>
                 <div className="result-meta">
@@ -372,7 +346,7 @@ export default function ControlDeckPage() {
 
           <div className="script-panel">
             <h3>Live payload preview</h3>
-            <pre>{JSON.stringify({ mode, paymentMode, provider: selectedProvider, input: activeInput }, null, 2)}</pre>
+            <pre>{JSON.stringify({ mode, route: walletConnected ? "wallet" : "sponsored", provider: selectedProvider, input: activeInput }, null, 2)}</pre>
           </div>
         </aside>
       </main>

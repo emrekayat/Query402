@@ -420,6 +420,14 @@ body {
   gap: 0.65rem;
 }
 
+.control-wallet-bar {
+  grid-column: 1 / -1;
+  border: 1px solid rgba(130, 163, 204, 0.24);
+  border-radius: 12px;
+  padding: 0.55rem 0.6rem;
+  background: rgba(10, 14, 24, 0.66);
+}
+
 .stat-tile {
   border: 1px solid rgba(140, 170, 210, 0.2);
   border-radius: 14px;
