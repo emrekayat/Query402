@@ -1,0 +1,31 @@
+{
+  "name": "@query402/agent-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "npm --prefix ../../packages/shared run build",
+    "pretypecheck": "npm --prefix ../../packages/shared run build",
+    "dev": "tsx src/cli.ts",
+    "cli": "tsx src/cli.ts",
+    "demo": "tsx src/demo.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo 'No lint configured for agent-client'",
+    "format": "echo 'No format task configured for agent-client'"
+  },
+  "dependencies": {
+    "@query402/shared": "0.1.0",
+    "@x402/core": "^2.9.0",
+    "@x402/fetch": "^2.9.0",
+    "@x402/stellar": "^2.9.0",
+    "dotenv": "^16.5.0",
+    "nanoid": "^5.1.5",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  }
+}

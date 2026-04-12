@@ -1,0 +1,84 @@
+import type { ProviderDefinition } from "@query402/shared";
+
+export const providers: ProviderDefinition[] = [
+  {
+    id: "search.basic",
+    name: "Basic Search",
+    category: "search",
+    priceUsd: 0.01,
+    description: "Fast, broad web signal retrieval for general prompts.",
+    latencyEstimateMs: 700,
+    qualityScore: 75,
+    sourceType: "mock",
+    enabled: true
+  },
+  {
+    id: "search.pro",
+    name: "Pro Search",
+    category: "search",
+    priceUsd: 0.02,
+    description: "Higher quality ranking with richer snippets.",
+    latencyEstimateMs: 1100,
+    qualityScore: 90,
+    sourceType: "mock",
+    enabled: true
+  },
+  {
+    id: "news.fast",
+    name: "Fast News",
+    category: "news",
+    priceUsd: 0.015,
+    description: "Latest headlines with low latency.",
+    latencyEstimateMs: 800,
+    qualityScore: 72,
+    sourceType: "mock",
+    enabled: true
+  },
+  {
+    id: "news.deep",
+    name: "Deep News",
+    category: "news",
+    priceUsd: 0.03,
+    description: "Clustered and contextualized stories.",
+    latencyEstimateMs: 1400,
+    qualityScore: 93,
+    sourceType: "mock",
+    enabled: true
+  },
+  {
+    id: "scrape.page",
+    name: "Page Scrape",
+    category: "scrape",
+    priceUsd: 0.02,
+    description: "Raw page extraction with quick metadata.",
+    latencyEstimateMs: 1000,
+    qualityScore: 70,
+    sourceType: "mock",
+    enabled: true
+  },
+  {
+    id: "scrape.extract",
+    name: "Structured Extract",
+    category: "scrape",
+    priceUsd: 0.04,
+    description: "Structured entities and concise extraction.",
+    latencyEstimateMs: 1700,
+    qualityScore: 95,
+    sourceType: "mock",
+    enabled: true
+  }
+];
+
+export const protectedRouteBasePrices: Record<string, string> = {
+  "GET /x402/search": "$0.01",
+  "GET /x402/news": "$0.015",
+  "GET /x402/scrape": "$0.02"
+};
+
+export function getProviderById(providerId: string) {
+  return providers.find((provider) => provider.id === providerId && provider.enabled);
+}
+
+export function getProvidersByCategory(category: ProviderDefinition["category"]) {
+  return providers.filter((provider) => provider.category === category && provider.enabled);
+}

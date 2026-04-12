@@ -1,0 +1,27 @@
+{
+  "name": "query402",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Query402 monorepo: agentic pay-per-query hub with Stellar x402",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev:api": "npm run dev --workspace @query402/api",
+    "dev:agent": "npm run dev --workspace @query402/agent-client",
+    "start:api": "npm run start --workspace @query402/api",
+    "cli": "npm run cli --workspace @query402/agent-client --",
+    "demo:agent": "npm run demo --workspace @query402/agent-client",
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
