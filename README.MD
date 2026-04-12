@@ -1,6 +1,8 @@
-# Query402
-
-Agentic pay-per-query internet access on Stellar with x402.
+<div align="center">
+  <img src="./public/Query402-logo.png" alt="Query402 logo" width="180" />
+  <h1>Query402</h1>
+  <p><strong>Agentic pay-per-query internet access on Stellar with x402.</strong></p>
+</div>
 
 Query402 is a hackathon-ready marketplace-style router where agents can buy `search`, `news`, and `scrape` results per request instead of paying monthly subscriptions.
 
@@ -31,7 +33,7 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 
 ## Architecture overview
 
-Full technical breakdown: [`architecture.md`](./architecture.md)
+Full technical breakdown: [`ARCHITECTURE.md`](./ARCHITECTURE.md)
 
 - `apps/api`
   - Public routes: `/health`, `/api/providers`, `/api/catalog`, `/api/usage`, `/api/analytics`
@@ -65,7 +67,7 @@ Full technical breakdown: [`architecture.md`](./architecture.md)
 ├─ package.json
 ├─ tsconfig.base.json
 ├─ README.MD
-└─ architecture.md
+└─ ARCHITECTURE.md
 ```
 
 ## Environment variables
@@ -262,7 +264,7 @@ Expected proof during demo:
 Include these assets in your hackathon submission:
 
 - `README.MD`
-- `architecture.md`
+- `ARCHITECTURE.md`
 - 3 screenshots:
   - dashboard query workspace with provider cards
   - successful paid result (trace + price visible)
