@@ -19,6 +19,14 @@ const modeDefaultProvider: Record<QueryMode, string> = {
   scrape: "scrape.page"
 };
 
+const TOKEN_SYMBOL = "USDC";
+const TOKEN_DECIMALS = 7;
+
+function toTokenBaseUnits(amountUsd: number) {
+  const normalizedAmount = amountUsd.toFixed(TOKEN_DECIMALS);
+  return normalizedAmount.replace(".", "").replace(/^0+/, "") || "0";
+}
+
 export default function ControlDeckPage() {
   const [mode, setMode] = useState<QueryMode>("search");
   const [connectedWalletAddress, setConnectedWalletAddress] = useState("");
@@ -43,6 +51,8 @@ export default function ControlDeckPage() {
 
   const activeInput = mode === "scrape" ? urlInput : queryInput;
   const walletConnected = connectedWalletAddress.length > 0;
+  const estimatedTokenAmount = selectedProviderDetails?.priceUsd.toFixed(TOKEN_DECIMALS) ?? "0.0000000";
+  const estimatedTokenBaseUnits = selectedProviderDetails ? toTokenBaseUnits(selectedProviderDetails.priceUsd) : "0";
 
   function shortAddress(address: string) {
     if (address.length < 12) {
@@ -240,6 +250,9 @@ export default function ControlDeckPage() {
               <p className="action-label">Provider lock</p>
               <p className="action-value">{selectedProviderDetails?.name ?? "Choose provider"}</p>
               <p className="action-label">Mode: {walletConnected ? "Wallet Connected" : "Sponsored"}</p>
+              <p className="action-label">
+                Estimated on-chain: {estimatedTokenAmount} {TOKEN_SYMBOL} ({estimatedTokenBaseUnits} base units)
+              </p>
             </div>
             <button className="run-btn" onClick={runPaidQuery} disabled={isLoading || !selectedProvider} type="button">
               {isLoading ? "Executing..." : "Run paid query"}
