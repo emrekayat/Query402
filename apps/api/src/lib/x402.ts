@@ -2,8 +2,47 @@ import { HTTPFacilitatorClient } from "@x402/core/server";
 import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactStellarScheme } from "@x402/stellar/exact/server";
 import type { NextFunction, Request, Response } from "express";
-import { protectedRouteBasePrices } from "./pricing.js";
+import type { HTTPRequestContext } from "@x402/core/server";
+import { getProviderById, protectedRouteBasePrices } from "./pricing.js";
 import { config } from "./config.js";
+
+type RouteMode = "search" | "news" | "scrape";
+
+const basePriceByMode: Record<RouteMode, string> = {
+  search: protectedRouteBasePrices["GET /x402/search"] ?? "$0.01",
+  news: protectedRouteBasePrices["GET /x402/news"] ?? "$0.015",
+  scrape: protectedRouteBasePrices["GET /x402/scrape"] ?? "$0.02"
+};
+
+function formatUsdPrice(value: number) {
+  return `$${value.toFixed(6).replace(/0+$/, "").replace(/\.$/, "")}`;
+}
+
+function getProviderFromContext(context: HTTPRequestContext) {
+  const rawProvider =
+    context.adapter.getQueryParam?.("provider") ??
+    context.adapter.getQueryParams?.()["provider"];
+
+  if (Array.isArray(rawProvider)) {
+    return rawProvider[0];
+  }
+
+  return rawProvider;
+}
+
+function resolveRoutePrice(context: HTTPRequestContext, mode: RouteMode) {
+  const providerId = getProviderFromContext(context);
+  if (!providerId) {
+    return basePriceByMode[mode];
+  }
+
+  const provider = getProviderById(providerId);
+  if (!provider || provider.category !== mode) {
+    return basePriceByMode[mode];
+  }
+
+  return formatUsdPrice(provider.priceUsd);
+}
 
 function demoMode402Middleware(req: Request, res: Response, next: NextFunction) {
   if (!req.path.startsWith("/x402/")) {
@@ -69,7 +108,7 @@ export function createX402Middleware() {
       accepts: {
         scheme: "exact",
         network,
-        price: protectedRouteBasePrices["GET /x402/search"],
+        price: (context: HTTPRequestContext) => resolveRoutePrice(context, "search"),
         payTo: config.X402_PAY_TO_ADDRESS
       },
       description: "Paid search endpoint on Query402"
@@ -78,7 +117,7 @@ export function createX402Middleware() {
       accepts: {
         scheme: "exact",
         network,
-        price: protectedRouteBasePrices["GET /x402/news"],
+        price: (context: HTTPRequestContext) => resolveRoutePrice(context, "news"),
         payTo: config.X402_PAY_TO_ADDRESS
       },
       description: "Paid news endpoint on Query402"
@@ -87,12 +126,12 @@ export function createX402Middleware() {
       accepts: {
         scheme: "exact",
         network,
-        price: protectedRouteBasePrices["GET /x402/scrape"],
+        price: (context: HTTPRequestContext) => resolveRoutePrice(context, "scrape"),
         payTo: config.X402_PAY_TO_ADDRESS
       },
       description: "Paid scrape endpoint on Query402"
     }
-  } as const;
+  };
 
   return paymentMiddleware(routeConfig, resourceServer);
 }
