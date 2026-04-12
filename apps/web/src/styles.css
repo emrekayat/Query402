@@ -19,6 +19,18 @@ body {
   color: #d8e4f3;
 }
 
+.app-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app-main-layer {
+  position: relative;
+  z-index: 1;
+}
+
 ::selection {
   background: rgba(182, 127, 255, 0.45);
   color: #f4efff;
@@ -30,10 +42,10 @@ body {
   min-height: 100vh;
   padding: 1.25rem 1.1rem 2rem;
   background:
-    radial-gradient(circle at 14% -5%, rgba(78, 214, 255, 0.14), transparent 35%),
-    radial-gradient(circle at 84% 5%, rgba(176, 99, 255, 0.16), transparent 34%),
-    radial-gradient(circle at 50% 100%, rgba(55, 224, 175, 0.09), transparent 45%),
-    #07090d;
+    radial-gradient(circle at 14% -5%, rgba(78, 214, 255, 0.18), transparent 35%),
+    radial-gradient(circle at 84% 5%, rgba(176, 99, 255, 0.2), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(55, 224, 175, 0.12), transparent 45%),
+    linear-gradient(rgba(7, 9, 13, 0.58), rgba(7, 9, 13, 0.58));
 }
 
 .q402-gridline,
@@ -1383,7 +1395,25 @@ body {
 }
 
 .lpx-shell {
+  position: relative;
   padding-top: 1.4rem;
+}
+
+.lpx-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(rgba(4, 7, 12, 0.62), rgba(4, 7, 12, 0.62));
+}
+
+.lpx-shell .q402-gridline {
+  opacity: 0.24;
+}
+
+.lpx-shell .q402-noise {
+  opacity: 0.018;
 }
 
 .lpx-wrap {
@@ -1392,6 +1422,10 @@ body {
   margin: 0 auto;
   max-width: 1260px;
   padding: 1rem 1rem 1.3rem;
+  border-radius: 24px;
+  border: 1px solid rgba(135, 168, 208, 0.2);
+  background: linear-gradient(rgba(6, 10, 16, 0.5), rgba(6, 10, 16, 0.42));
+  backdrop-filter: blur(2px);
 }
 
 .lpx-topbar {
@@ -1426,7 +1460,7 @@ body {
 .lpx-brand span {
   display: block;
   margin-top: 0.1rem;
-  color: #90a9c7;
+  color: #b4c7df;
   font-size: 0.71rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1516,6 +1550,7 @@ body {
   letter-spacing: -0.04em;
   max-width: 940px;
   color: #f1f6ff;
+  text-shadow: 0 6px 22px rgba(2, 7, 16, 0.55);
   text-wrap: balance;
 }
 
@@ -1524,7 +1559,7 @@ body {
   position: relative;
   z-index: 2;
   max-width: 760px;
-  color: #93abc8;
+  color: #b5c8e1;
   font-size: 1.03rem;
   line-height: 1.63;
 }
@@ -1573,7 +1608,7 @@ body {
   border: 1px solid rgba(128, 161, 198, 0.24);
   border-radius: 999px;
   background: rgba(8, 12, 20, 0.55);
-  color: #9fb8d6;
+  color: #c3d5ea;
   padding: 0.44rem 0.68rem;
   font-size: 0.76rem;
 }
@@ -1607,7 +1642,7 @@ body {
 
 .lpx-manifesto p {
   margin: 0.85rem 0 0;
-  color: #91aac8;
+  color: #b1c6df;
   font-size: 1.02rem;
   line-height: 1.64;
 }
@@ -1655,7 +1690,7 @@ body {
 
 .lpx-flow li p {
   margin: 0.42rem 0 0;
-  color: #8ea7c5;
+  color: #adc3dd;
   font-size: 0.97rem;
   line-height: 1.6;
   max-width: 760px;
@@ -1695,7 +1730,7 @@ body {
 
 .lpx-section p:last-child {
   margin: 0.66rem 0 0;
-  color: #8fa8c7;
+  color: #afc4dd;
   max-width: 840px;
   font-size: 1rem;
   line-height: 1.65;
@@ -1735,7 +1770,7 @@ body {
 
 .lpx-footer p {
   margin: 0;
-  color: #7f99bb;
+  color: #b3c7df;
   letter-spacing: 0.08em;
   font-size: 0.75rem;
   text-transform: uppercase;

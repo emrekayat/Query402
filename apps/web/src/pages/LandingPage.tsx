@@ -42,9 +42,6 @@ export default function LandingPage() {
           </div>
 
           <div className="lpx-topbar-actions">
-            <a className="lpx-chip" href="https://developers.stellar.org/docs/build/apps/example-application-x402" target="_blank" rel="noreferrer">
-              <Sparkles size={13} /> x402 docs
-            </a>
             <Link className="lpx-cta" to="/control">
               Enter Control Deck
               <ArrowRight size={15} />
