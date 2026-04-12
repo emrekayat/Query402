@@ -31,6 +31,8 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 
 ## Architecture overview
 
+Full technical breakdown: [`architecture.md`](./architecture.md)
+
 - `apps/api`
   - Public routes: `/health`, `/api/providers`, `/api/catalog`, `/api/usage`, `/api/analytics`
   - Protected routes: `/x402/search`, `/x402/news`, `/x402/scrape`
@@ -55,14 +57,15 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 .
 ├─ apps/
 │  ├─ api/
-│  └─ agent-client/
+│  ├─ agent-client/
 │  └─ web/
 ├─ packages/
 │  └─ shared/
 ├─ .env.example
 ├─ package.json
 ├─ tsconfig.base.json
-└─ README.md
+├─ README.MD
+└─ architecture.md
 ```
 
 ## Environment variables
@@ -170,11 +173,54 @@ Notes:
 ## Demo flow (2–3 minutes)
 
 1. Start API and Web.
-2. Dashboard’da provider kartlarını ve fiyatları göster.
-3. Search mode’da “Run paid query” tetikle.
-4. Result panelinde payment trace + structured sonuçları göster.
-5. Usage panelinde spend breakdown’u anlat.
-6. CLI demo ile ikinci kanal doğrulaması yap.
+2. Dashboard'da provider cards, price, quality, latency alanlarını göster.
+3. `search.basic` seçip `latest stellar x402 updates` sorgusunu çalıştır.
+4. Result panelinde provider, price, trace id ve timestamp alanlarını göster.
+5. Analytics panelinde total spend ve category breakdown'u anlat.
+6. Terminalde CLI ile aynı sistemi ikinci kanaldan doğrula.
+
+## Demo rehearsal runbook (judge-safe)
+
+Use these exact commands:
+
+```bash
+cd /Users/eminkaragoz/Desktop/projects/Query402
+npm install
+```
+
+Terminal 1:
+
+```bash
+cd /Users/eminkaragoz/Desktop/projects/Query402
+npm run dev:api
+```
+
+Terminal 2:
+
+```bash
+cd /Users/eminkaragoz/Desktop/projects/Query402
+npm run dev:web
+```
+
+Terminal 3 (real payment proof):
+
+```bash
+cd /Users/eminkaragoz/Desktop/projects/Query402
+npm run validate:real --workspace @query402/agent-client
+```
+
+Optional CLI proof:
+
+```bash
+cd /Users/eminkaragoz/Desktop/projects/Query402
+npm run cli -- search "latest soroban updates" --provider search.basic
+```
+
+Expected proof during demo:
+- `Status: 200`
+- `payment-response` header value
+- provider and paid price in output
+- usage/analytics counters increasing in dashboard
 
 ## What is mocked vs real
 
@@ -206,11 +252,30 @@ Notes:
 
 ## Future improvements
 
-- Add frontend dashboard (`apps/web`) with polished dark UI.
 - Add real provider adapters (Brave, SerpAPI, NewsAPI, HTML extraction).
 - Add richer payment metadata parsing from payment headers.
 - Add SQLite persistence for more advanced analytics queries.
 - Add integration tests with a reachable facilitator in CI.
+
+## Submission packaging
+
+Include these assets in your hackathon submission:
+
+- `README.MD`
+- `architecture.md`
+- 3 screenshots:
+  - dashboard query workspace with provider cards
+  - successful paid result (trace + price visible)
+  - usage analytics panel (total + breakdown)
+- short terminal capture of `npm run validate:real --workspace @query402/agent-client`
+
+Judge talking points (30-second version):
+
+1. Query402 lets agents buy internet access per request, not subscription.
+2. Paid routes are protected by x402 and settled on Stellar testnet.
+3. Marketplace UX compares providers by price, latency, and quality.
+4. Every paid call is logged into usage + spend analytics.
+5. Real payment flow is reproducible with one validator command.
 
 ## Hackathon submission checklist
 
