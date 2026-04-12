@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { ProviderDefinition, QueryMode } from "@query402/shared";
-import { Activity, CircleDollarSign, FlaskConical, Gauge, Home, Radar, ReceiptText, Sparkles, TerminalSquare } from "lucide-react";
+import { Activity, CircleDollarSign, Gauge, Home, Radar, ReceiptText, Sparkles, TerminalSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { AnalyticsResponse, PaidQueryResponse } from "../types.js";
 import { API_BASE_URL, fetchJson, money } from "../lib/api.js";
@@ -19,7 +19,6 @@ const modeDefaultProvider: Record<QueryMode, string> = {
 
 export default function ControlDeckPage() {
   const [mode, setMode] = useState<QueryMode>("search");
-  const [demoMode, setDemoMode] = useState(true);
   const [queryInput, setQueryInput] = useState("latest stellar x402 updates");
   const [urlInput, setUrlInput] = useState("https://developers.stellar.org");
   const [providers, setProviders] = useState<ProviderDefinition[]>([]);
@@ -71,36 +70,25 @@ export default function ControlDeckPage() {
     setError(null);
 
     try {
-      const payload = {
-        mode,
-        provider: selectedProvider,
-        query: mode === "scrape" ? undefined : queryInput,
-        url: mode === "scrape" ? urlInput : undefined
-      };
-
-      let data: PaidQueryResponse;
-
-      if (demoMode) {
-        data = await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/demo/run`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      } else {
-        const params = new URLSearchParams({ provider: selectedProvider });
-        if (mode === "scrape") {
-          params.set("url", urlInput);
-        } else {
-          params.set("q", queryInput);
-        }
-
-        data = await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/x402/${mode}?${params.toString()}`);
-      }
+      const data = await fetchJson<PaidQueryResponse>(`${API_BASE_URL}/api/paid/run`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode,
+          provider: selectedProvider,
+          query: mode === "scrape" ? undefined : queryInput,
+          url: mode === "scrape" ? urlInput : undefined
+        })
+      });
 
       setResult(data);
       await refreshMetrics();
     } catch (runError) {
-      setError(runError instanceof Error ? runError.message : "Query failed");
+      if (runError instanceof Error) {
+        setError(runError.message);
+      } else {
+        setError("Query failed");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -158,13 +146,6 @@ export default function ControlDeckPage() {
             ) : (
               <input value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder="latest stellar x402 updates" />
             )}
-
-            <label className="demo-toggle">
-              <span>
-                <FlaskConical size={14} /> Demo mode
-              </span>
-              <input checked={demoMode} onChange={() => setDemoMode((prev) => !prev)} type="checkbox" />
-            </label>
           </div>
 
           <div className="provider-strip">
@@ -297,7 +278,7 @@ export default function ControlDeckPage() {
 
           <div className="script-panel">
             <h3>Live payload preview</h3>
-            <pre>{JSON.stringify({ mode, provider: selectedProvider, input: activeInput, demoMode }, null, 2)}</pre>
+            <pre>{JSON.stringify({ mode, provider: selectedProvider, input: activeInput }, null, 2)}</pre>
           </div>
         </aside>
       </main>

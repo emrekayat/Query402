@@ -3,8 +3,21 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localho
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init);
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    const contentType = response.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      const payload = await response.json();
+      if (typeof payload?.error === "string" && payload.error.length > 0) {
+        throw new Error(payload.error);
+      }
+      if (typeof payload?.message === "string" && payload.message.length > 0) {
+        throw new Error(payload.message);
+      }
+      throw new Error(JSON.stringify(payload));
+    }
+
+    const textMessage = await response.text();
+    throw new Error(textMessage || `Request failed: ${response.status}`);
   }
   return (await response.json()) as T;
 }

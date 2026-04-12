@@ -551,25 +551,6 @@ body {
   box-shadow: 0 0 0 2px rgba(92, 223, 255, 0.18);
 }
 
-.demo-toggle {
-  margin-top: 0.2rem;
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid rgba(124, 157, 197, 0.24);
-  border-radius: 10px;
-  padding: 0.45rem 0.6rem;
-  background: rgba(12, 17, 28, 0.72);
-}
-
-.demo-toggle span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  color: #9db3cf;
-  font-size: 0.83rem;
-}
-
 .provider-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

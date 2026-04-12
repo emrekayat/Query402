@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { publicRouter } from "./routes/public.js";
 import { protectedRouter } from "./routes/protected.js";
-import { demoRouter } from "./routes/demo.js";
+import { paidRouter } from "./routes/demo.js";
 import { createX402Middleware } from "./lib/x402.js";
 import { logger } from "./lib/logger.js";
 
@@ -18,7 +18,7 @@ app.use((req, _res, next) => {
 app.use(publicRouter);
 app.use(createX402Middleware());
 app.use(protectedRouter);
-app.use(demoRouter);
+app.use(paidRouter);
 
 app.use((error: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   res.status(500).json({

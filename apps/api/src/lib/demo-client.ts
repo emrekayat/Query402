@@ -5,7 +5,7 @@ import { ExactStellarScheme } from "@x402/stellar/exact/client";
 import { nanoid } from "nanoid";
 import { config } from "./config.js";
 
-export async function runDemoPaidRequest(input: {
+export async function runPaidRequest(input: {
   mode: "search" | "news" | "scrape";
   query?: string;
   url?: string;
@@ -63,3 +63,5 @@ export async function runDemoPaidRequest(input: {
     payload
   };
 }
+
+export const runDemoPaidRequest = runPaidRequest;
