@@ -142,6 +142,31 @@ Full CLI showcase:
 npm run demo:agent
 ```
 
+Real payment validation (`DEMO_MODE=false`):
+
+```bash
+npm run validate:real
+```
+
+If this passes, output includes payment proof fields (`payment-response`, trace id, provider, price).
+
+## Real payment validation playbook
+
+1. Set `DEMO_MODE=false` in `.env`.
+2. Fill real funded keys (not placeholders):
+  - `DEMO_CLIENT_SECRET_KEY`
+  - `DEMO_CLIENT_PUBLIC_KEY`
+  - `X402_PAY_TO_ADDRESS`
+  - `X402_FACILITATOR_API_KEY` (for `channels.openzeppelin.com` facilitator)
+3. If needed, create facilitator key: `https://channels.openzeppelin.com/testnet/gen`
+4. Ensure API is running (`npm run dev:api`).
+5. Run `npm run validate:real`.
+6. Keep CLI output as judge proof screenshot/log.
+
+Notes:
+- Script checks API health and facilitator `/supported` reachability before payment attempt.
+- If facilitator/wallet funding is not ready, the script fails fast with explicit reason.
+
 ## Demo flow (2–3 minutes)
 
 1. Start API and Web.
@@ -163,6 +188,7 @@ npm run demo:agent
 - Network config uses `stellar:testnet` + Soroban RPC URL.
 - Client and server include Stellar x402 scheme integration (`@x402/stellar`).
 - Facilitator URL is fully environment-driven.
+- `npm run validate:real` provides a reproducible real-payment validation path for demo day.
 
 ## What judges should notice
 

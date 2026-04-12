@@ -1,4 +1,112 @@
 {
-  "usage": [],
-  "payments": []
+  "usage": [
+    {
+      "id": "use_24CtIczMZv",
+      "mode": "search",
+      "endpoint": "/x402/search",
+      "providerId": "search.basic",
+      "queryOrUrl": "latest stellar x402 updates",
+      "priceUsd": 0.01,
+      "network": "stellar:testnet",
+      "paymentStatus": "paid",
+      "facilitatorUrl": "https://channels.openzeppelin.com/x402/testnet",
+      "traceId": "trace_UCyX-SJnHlEh",
+      "createdAt": "2026-04-12T18:11:28.924Z",
+      "latencyMs": 616
+    },
+    {
+      "id": "use_fVzoPFCU0N",
+      "mode": "scrape",
+      "endpoint": "/x402/scrape",
+      "providerId": "scrape.extract",
+      "queryOrUrl": "https://developers.stellar.org",
+      "priceUsd": 0.04,
+      "network": "stellar:testnet",
+      "paymentStatus": "paid",
+      "paymentTxHash": "demo_tx_L1l4IAO_yL",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "traceId": "trace_SBmVHmUX9kp6",
+      "createdAt": "2026-04-12T15:35:40.177Z",
+      "latencyMs": 1783
+    },
+    {
+      "id": "use_hQIfdnmvYY",
+      "mode": "news",
+      "endpoint": "/x402/news",
+      "providerId": "news.deep",
+      "queryOrUrl": "stablecoin micropayments",
+      "priceUsd": 0.03,
+      "network": "stellar:testnet",
+      "paymentStatus": "paid",
+      "paymentTxHash": "demo_tx_4ofN2v3X37",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "traceId": "trace_aJl_JZP5cfjt",
+      "createdAt": "2026-04-12T15:35:38.387Z",
+      "latencyMs": 1490
+    },
+    {
+      "id": "use_KVvzTfDgb-",
+      "mode": "search",
+      "endpoint": "/x402/search",
+      "providerId": "search.pro",
+      "queryOrUrl": "latest stellar x402 updates",
+      "priceUsd": 0.02,
+      "network": "stellar:testnet",
+      "paymentStatus": "paid",
+      "paymentTxHash": "demo_tx_MS1JuypwLu",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "traceId": "trace_g2VMaEhrfy2u",
+      "createdAt": "2026-04-12T15:35:36.888Z",
+      "latencyMs": 1070
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_ZNS-38N5TC",
+      "endpoint": "/x402/search",
+      "providerId": "search.basic",
+      "amountUsd": 0.01,
+      "network": "stellar:testnet",
+      "payToAddress": "GC5TXYP4F7ZEDLDFYBIFG67KU4UUPOS2IESICQYMSZYOY6GN5MIOUW3P",
+      "facilitatorUrl": "https://channels.openzeppelin.com/x402/testnet",
+      "status": "settled",
+      "createdAt": "2026-04-12T18:11:28.924Z"
+    },
+    {
+      "id": "pay_JZvxvv3ycP",
+      "endpoint": "/x402/scrape",
+      "providerId": "scrape.extract",
+      "amountUsd": 0.04,
+      "network": "stellar:testnet",
+      "payToAddress": "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "status": "settled",
+      "transactionHash": "demo_tx_L1l4IAO_yL",
+      "createdAt": "2026-04-12T15:35:40.177Z"
+    },
+    {
+      "id": "pay_-iyfWPFukZ",
+      "endpoint": "/x402/news",
+      "providerId": "news.deep",
+      "amountUsd": 0.03,
+      "network": "stellar:testnet",
+      "payToAddress": "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "status": "settled",
+      "transactionHash": "demo_tx_4ofN2v3X37",
+      "createdAt": "2026-04-12T15:35:38.387Z"
+    },
+    {
+      "id": "pay_Lyd0pssE6d",
+      "endpoint": "/x402/search",
+      "providerId": "search.pro",
+      "amountUsd": 0.02,
+      "network": "stellar:testnet",
+      "payToAddress": "GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "facilitatorUrl": "https://facilitator.x402.org",
+      "status": "settled",
+      "transactionHash": "demo_tx_MS1JuypwLu",
+      "createdAt": "2026-04-12T15:35:36.888Z"
+    }
+  ]
 }

@@ -125,7 +125,7 @@ export default function App() {
       <div className="q402-noise" />
 
       <header className="bridge">
-        <div className="bridge-left">
+        <div className="bridge-left lift-in">
           <p className="stamp">
             <Sparkles size={13} /> Query402 Control Deck
           </p>
@@ -133,7 +133,7 @@ export default function App() {
           <p className="subtitle">Stellar testnet üzerinde x402 akışıyla provider seç, query başına öde, izi anında denetle.</p>
         </div>
 
-        <div className="bridge-right">
+        <div className="bridge-right lift-in delay-1">
           <StatTile label="Queries" value={String(analytics?.totalQueries ?? 0)} icon={<Activity size={16} />} />
           <StatTile label="Spend" value={money(analytics?.totalSpendUsd ?? 0)} icon={<CircleDollarSign size={16} />} />
           <StatTile label="Search" value={money(analytics?.spendByCategory.search ?? 0)} icon={<Radar size={16} />} />
@@ -142,7 +142,7 @@ export default function App() {
       </header>
 
       <main className="dock">
-        <section className="bay bay--left">
+        <section className="bay bay--left lift-in delay-2">
           <div className="bay-head">
             <h2>Query Bay</h2>
             <span>{modeLabels[mode]} mode</span>
@@ -178,11 +178,12 @@ export default function App() {
           </div>
 
           <div className="provider-strip">
-            {modeProviders.map((provider) => (
+            {modeProviders.map((provider, index) => (
               <button
                 key={provider.id}
                 onClick={() => setSelectedProvider(provider.id)}
                 className={provider.id === selectedProvider ? "provider-card selected" : "provider-card"}
+                style={{ animationDelay: `${index * 70}ms` }}
                 type="button"
               >
                 <p className="provider-name">{provider.name}</p>
@@ -209,7 +210,7 @@ export default function App() {
 
           {error ? <p className="error-box">{error}</p> : null}
 
-          <div className="result-zone">
+          <div className="result-zone sweep">
             <div className="bay-head bay-head--compact">
               <h2>Signal Output</h2>
               <span>{result ? new Date(result.result.timestamp).toLocaleTimeString() : "waiting"}</span>
@@ -247,7 +248,7 @@ export default function App() {
           </div>
         </section>
 
-        <aside className="bay bay--right">
+        <aside className="bay bay--right lift-in delay-3">
           <div className="orbital">
             <div className="orbital-center">
               <Gauge size={20} />

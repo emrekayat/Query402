@@ -42,8 +42,21 @@ export function createX402Middleware() {
 
   const network = config.STELLAR_NETWORK as `${string}:${string}`;
 
+  const createAuthHeaders =
+    config.X402_FACILITATOR_API_KEY && config.X402_FACILITATOR_API_KEY.length > 0
+      ? async () => {
+          const authHeaders = { Authorization: `Bearer ${config.X402_FACILITATOR_API_KEY}` };
+          return {
+            verify: authHeaders,
+            settle: authHeaders,
+            supported: authHeaders
+          };
+        }
+      : undefined;
+
   const facilitatorClient = new HTTPFacilitatorClient({
-    url: config.X402_FACILITATOR_URL
+    url: config.X402_FACILITATOR_URL,
+    createAuthHeaders
   });
 
   const resourceServer = new x402ResourceServer(facilitatorClient).register(
@@ -81,5 +94,5 @@ export function createX402Middleware() {
     }
   } as const;
 
-  return paymentMiddleware(routeConfig, resourceServer, undefined, undefined, false);
+  return paymentMiddleware(routeConfig, resourceServer);
 }

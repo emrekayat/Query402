@@ -17,6 +17,7 @@
     "start:api": "npm run start --workspace @query402/api",
     "cli": "npm run cli --workspace @query402/agent-client --",
     "demo:agent": "npm run demo --workspace @query402/agent-client",
+    "validate:real": "npm run validate:real --workspace @query402/agent-client",
     "preview:web": "npm run preview --workspace @query402/web",
     "build": "npm run build --workspaces",
     "typecheck": "npm run typecheck --workspaces",
