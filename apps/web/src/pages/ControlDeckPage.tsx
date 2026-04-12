@@ -29,6 +29,7 @@ function toTokenBaseUnits(amountUsd: number) {
 
 export default function ControlDeckPage() {
   const [mode, setMode] = useState<QueryMode>("search");
+  const [paymentMode, setPaymentMode] = useState<"wallet" | "sponsored">("wallet");
   const [connectedWalletAddress, setConnectedWalletAddress] = useState("");
   const [queryInput, setQueryInput] = useState("latest stellar x402 updates");
   const [urlInput, setUrlInput] = useState("https://developers.stellar.org");
@@ -101,13 +102,19 @@ export default function ControlDeckPage() {
     }
   }, [modeProviders, selectedProvider]);
 
+  useEffect(() => {
+    if (!walletConnected && paymentMode === "sponsored") {
+      setPaymentMode("wallet");
+    }
+  }, [walletConnected, paymentMode]);
+
   async function runPaidQuery() {
     setIsLoading(true);
     setError(null);
 
     try {
       const data =
-        walletConnected
+        paymentMode === "wallet"
           ? await runWalletPaidQuery({
               apiBaseUrl: API_BASE_URL,
               mode,
@@ -216,13 +223,28 @@ export default function ControlDeckPage() {
               <input value={queryInput} onChange={(event) => setQueryInput(event.target.value)} placeholder="latest stellar x402 updates" />
             )}
 
-            <label>PAYMENT MODE</label>
+            <label>PAYMENT MODE (Hackathon)</label>
             <div className="payment-mode-switch">
-              <button type="button" className="payment-mode-btn active" disabled>
+              <button
+                type="button"
+                className={paymentMode === "sponsored" ? "payment-mode-btn active" : "payment-mode-btn"}
+                onClick={() => setPaymentMode("sponsored")}
+                disabled={!walletConnected}
+              >
                 Sponsored tx
               </button>
+              <button
+                type="button"
+                className={paymentMode === "wallet" ? "payment-mode-btn active" : "payment-mode-btn"}
+                onClick={() => setPaymentMode("wallet")}
+                disabled={!walletConnected}
+              >
+                Wallet tx
+              </button>
             </div>
-            <p className="wallet-hint">If a wallet is connected, payment is made with the wallet; otherwise, the sponsored flow is used.</p>
+            <p className="wallet-hint">
+              Sponsored mode is available only after wallet connection. If you do not click Sponsored tx, payment continues with wallet tx.
+            </p>
           </div>
 
           <div className="provider-strip">
@@ -249,12 +271,12 @@ export default function ControlDeckPage() {
             <div>
               <p className="action-label">Provider lock</p>
               <p className="action-value">{selectedProviderDetails?.name ?? "Choose provider"}</p>
-              <p className="action-label">Mode: {walletConnected ? "Wallet Connected" : "Sponsored"}</p>
+              <p className="action-label">Mode: {paymentMode === "sponsored" ? "Sponsored" : "Wallet"}</p>
               <p className="action-label">
                 Estimated on-chain: {estimatedTokenAmount} {TOKEN_SYMBOL} ({estimatedTokenBaseUnits} base units)
               </p>
             </div>
-            <button className="run-btn" onClick={runPaidQuery} disabled={isLoading || !selectedProvider} type="button">
+            <button className="run-btn" onClick={runPaidQuery} disabled={isLoading || !selectedProvider || !walletConnected} type="button">
               {isLoading ? "Executing..." : "Run paid query"}
               <TerminalSquare size={16} />
             </button>
