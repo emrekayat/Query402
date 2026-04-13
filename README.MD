@@ -33,7 +33,7 @@ Query402 is a hackathon-ready marketplace-style router where agents can buy `sea
 
 ## Architecture overview
 
-Full technical breakdown: [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+Full technical breakdown: [`ARCHITECTURE.md`](./architecture.md)
 
 - `apps/api`
   - Public routes: `/health`, `/api/providers`, `/api/catalog`, `/api/usage`, `/api/analytics`
@@ -272,7 +272,7 @@ Expected proof during demo:
 Include these assets in your hackathon submission:
 
 - `README.MD`
-- `ARCHITECTURE.md`
+- `architecture.md`
 - 3 screenshots:
   - dashboard query workspace with provider cards
   - successful paid result (trace + price visible)
