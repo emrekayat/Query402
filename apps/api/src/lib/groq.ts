@@ -33,6 +33,17 @@ function parseItemsFromContent(content: string) {
 }
 
 function buildPrompt(mode: QueryMode, query: string): string {
+  if (mode === "scrape") {
+    return [
+      `Target URL: ${query}`,
+      "Extract key information from this page and return 3 JSON items only.",
+      "Use this shape for each item: title, url, snippet, score.",
+      "Prefer: page summary, key entities/topics, practical insights.",
+      "URLs should be the target URL or same-site anchors when relevant.",
+      "No markdown, no explanations, JSON only."
+    ].join("\n");
+  }
+
   const modeLabel = mode === "news" ? "news" : "search";
   return [
     `User query: ${query}`,

@@ -1,25 +1,34 @@
 import { nanoid } from "nanoid";
 import type { ProviderResultItem, QueryResult } from "@query402/shared";
 import { getProviderById } from "../lib/pricing.js";
+import { fetchGroqItems } from "../lib/groq.js";
 
 function buildScrapeItems(targetUrl: string): ProviderResultItem[] {
+  const hostname = (() => {
+    try {
+      return new URL(targetUrl).hostname.replace(/^www\./, "");
+    } catch {
+      return "target site";
+    }
+  })();
+
   return [
     {
       title: "Page title",
       url: targetUrl,
-      snippet: "Query402 demo extract: structured summary from target page.",
+      snippet: `Structured summary extracted from ${hostname}.`,
       score: 0.88
     },
     {
       title: "Key entities",
       url: `${targetUrl}#entities`,
-      snippet: "Entities: Stellar, x402, USDC, facilitator, agent payments.",
+      snippet: `Main entities and concepts identified on ${hostname}.`,
       score: 0.84
     },
     {
       title: "Actionable insights",
       url: `${targetUrl}#insights`,
-      snippet: "Highlights implementation-ready points for agent workflows.",
+      snippet: `Actionable takeaways and implementation notes from ${hostname}.`,
       score: 0.81
     }
   ];
@@ -34,6 +43,18 @@ export async function runScrapeProvider(targetUrl: string, providerId: string): 
   const latencyMs = Math.max(240, provider.latencyEstimateMs - 70 + Math.floor(Math.random() * 420));
   await new Promise((resolve) => setTimeout(resolve, Math.min(2200, latencyMs)));
 
+  let items = buildScrapeItems(targetUrl);
+  let source = provider.sourceType;
+  try {
+    const groqItems = await fetchGroqItems("scrape", targetUrl);
+    if (groqItems && groqItems.length > 0) {
+      items = groqItems;
+      source = "real";
+    }
+  } catch {
+    source = provider.sourceType;
+  }
+
   return {
     mode: "scrape",
     providerId: provider.id,
@@ -42,9 +63,9 @@ export async function runScrapeProvider(targetUrl: string, providerId: string): 
     latencyMs,
     timestamp: new Date().toISOString(),
     traceId: `trace_${nanoid(12)}`,
-    items: buildScrapeItems(targetUrl),
+    items,
     raw: {
-      source: provider.sourceType,
+      source,
       url: targetUrl,
       extractionDepth: provider.id.includes("extract") ? "structured" : "surface"
     }
