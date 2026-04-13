@@ -39,9 +39,10 @@ Full technical breakdown: [`ARCHITECTURE.md`](./ARCHITECTURE.md)
   - Public routes: `/health`, `/api/providers`, `/api/catalog`, `/api/usage`, `/api/analytics`
   - Protected routes: `/x402/search`, `/x402/news`, `/x402/scrape`
   - Demo convenience route: `POST /api/demo/run`
-  - x402 integration in `src/lib/x402.ts`
+  - x402 integration in `src/lib/x402.ts` (provider-aware dynamic route pricing)
   - Stellar config in `src/lib/stellar.ts`
   - Pricing in `src/lib/pricing.ts`
+  - AI provider integration in `src/lib/groq.ts`
   - Persistence in `src/lib/persistence.ts`
 - `apps/agent-client`
   - CLI commands for paid requests (`search`, `news`, `scrape`)
@@ -83,8 +84,13 @@ Copy `.env.example` to `.env` and fill values:
 - `PORT_API`
 - `API_BASE_URL`
 - `VITE_API_BASE_URL`
+- `CORS_ORIGINS` (comma-separated allowed origins for API in production)
 - `DEMO_MODE` (`true` for deterministic demo reliability)
-- Optional keys: `BRAVE_API_KEY`, `SERPAPI_API_KEY`, `NEWS_API_KEY`
+- Optional keys: `BRAVE_API_KEY`, `SERPAPI_API_KEY`, `NEWS_API_KEY`, `GROQ_API_KEY`, `GROQ_MODEL`
+
+Deployment note:
+- Render (API): set server vars like `GROQ_*`, `X402_*`, `CORS_ORIGINS`.
+- Vercel (Web): set only `VITE_*` vars (for example `VITE_API_BASE_URL`).
 
 ## How to fund wallets on testnet
 
@@ -226,7 +232,9 @@ Expected proof during demo:
 
 ## What is mocked vs real
 
-- Mocked provider content: yes (deterministic structured data).
+- Provider content generation:
+  - `search` / `news` / `scrape`: AI-generated via Groq when `GROQ_API_KEY` is configured.
+  - Fallback: deterministic local provider outputs when Groq is unavailable or errors.
 - Real x402 middleware integration: yes (`@x402/express`, `@x402/core`, `@x402/stellar`).
 - Real Stellar payment execution: supported when `DEMO_MODE=false` and facilitator + funded wallets are reachable.
 - Hackathon reliability fallback: `DEMO_MODE=true` returns proper 402 semantics and deterministic paid retry behavior.
@@ -254,7 +262,7 @@ Expected proof during demo:
 
 ## Future improvements
 
-- Add real provider adapters (Brave, SerpAPI, NewsAPI, HTML extraction).
+- Add citation/link verification and stricter source quality filters for AI-generated results.
 - Add richer payment metadata parsing from payment headers.
 - Add SQLite persistence for more advanced analytics queries.
 - Add integration tests with a reachable facilitator in CI.

@@ -33,6 +33,7 @@ Query402/
 │  │  │  └─ scrape.ts
 │  │  ├─ src/lib/
 │  │  │  ├─ config.ts
+│  │  │  ├─ groq.ts
 │  │  │  ├─ x402.ts
 │  │  │  ├─ stellar.ts
 │  │  │  ├─ pricing.ts
@@ -109,7 +110,12 @@ Provider contract includes:
 - latency estimate, quality score
 - source type (`mock`/`real`) and enabled flag
 
-Pricing is centralized in `apps/api/src/lib/pricing.ts`, and catalog endpoints expose rates to UI/CLI.
+Pricing and execution behavior:
+
+- Catalog/base prices are centralized in `apps/api/src/lib/pricing.ts`.
+- x402 protected route price is resolved dynamically in `apps/api/src/lib/x402.ts` using request `provider` query param.
+- If provider is missing/invalid, route falls back to base mode price.
+- Provider results are generated through Groq (`apps/api/src/lib/groq.ts`) when configured, with deterministic fallback outputs.
 
 ## 6) Persistence and analytics
 
@@ -128,6 +134,7 @@ Analytics endpoints:
 - Real mode: `DEMO_MODE=false` for actual x402/Stellar flow.
 - Demo mode: `DEMO_MODE=true` to guarantee deterministic presentation path.
 - Validation command: `npm run validate:real --workspace @query402/agent-client`.
+- AI reliability: if `GROQ_API_KEY` is missing or Groq fails, providers return deterministic fallback data.
 
 This dual-path strategy keeps the demo resilient while preserving real-payment credibility.
 
@@ -136,7 +143,7 @@ This dual-path strategy keeps the demo resilient while preserving real-payment c
 Current MVP trade-offs:
 
 - JSON persistence instead of SQL for speed and clarity.
-- Mock-first providers to avoid external API fragility.
+- AI-first provider generation with deterministic fallback for demo stability.
 - No user auth (out of scope for hackathon focus).
 
 Natural next steps:
