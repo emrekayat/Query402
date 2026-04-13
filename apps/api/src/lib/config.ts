@@ -31,6 +31,7 @@ const envSchema = z.object({
   X402_FACILITATOR_API_KEY: z.string().optional(),
   X402_PAY_TO_ADDRESS: z.string().min(10, "X402_PAY_TO_ADDRESS is required"),
   API_BASE_URL: z.string().url().default("http://localhost:3001"),
+  CORS_ORIGINS: z.string().optional(),
   DEMO_CLIENT_SECRET_KEY: z.string().optional(),
   DEMO_CLIENT_PUBLIC_KEY: z.string().optional(),
   BRAVE_API_KEY: z.string().optional(),
@@ -47,5 +48,9 @@ if (!parsed.success) {
 
 export const config = {
   ...parsed.data,
+  corsOrigins: (parsed.data.CORS_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   demoMode: parsed.data.DEMO_MODE === "true"
 };

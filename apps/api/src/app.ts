@@ -5,11 +5,39 @@ import { protectedRouter } from "./routes/protected.js";
 import { paidRouter } from "./routes/demo.js";
 import { createX402Middleware } from "./lib/x402.js";
 import { logger } from "./lib/logger.js";
+import { config } from "./lib/config.js";
 
 export const app = express();
 
+const defaultDevelopmentOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000"
+];
+
+const allowedOrigins =
+  config.corsOrigins.length > 0
+    ? config.corsOrigins
+    : config.NODE_ENV === "production"
+      ? []
+      : defaultDevelopmentOrigins;
+
 app.use(
   cors({
+    origin(origin, callback) {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     exposedHeaders: ["payment-required", "payment-response", "x-payment-response"]
   })
 );
