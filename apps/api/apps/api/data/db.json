@@ -1,6 +1,20 @@
 {
   "usage": [
     {
+      "id": "use_rzJKhozxL6",
+      "mode": "search",
+      "endpoint": "/x402/search",
+      "providerId": "search.pro",
+      "queryOrUrl": "latest stellar x402 updates",
+      "priceUsd": 0.02,
+      "network": "stellar:testnet",
+      "paymentStatus": "paid",
+      "facilitatorUrl": "https://channels.openzeppelin.com/x402/testnet",
+      "traceId": "trace_YLemAiF1Jt7J",
+      "createdAt": "2026-04-13T12:35:10.845Z",
+      "latencyMs": 1201
+    },
+    {
       "id": "use_xwViQT1Z1Y",
       "mode": "scrape",
       "endpoint": "/x402/scrape",
@@ -145,6 +159,17 @@
     }
   ],
   "payments": [
+    {
+      "id": "pay_PqGl4AsNY3",
+      "endpoint": "/x402/search",
+      "providerId": "search.pro",
+      "amountUsd": 0.02,
+      "network": "stellar:testnet",
+      "payToAddress": "GC5TXYP4F7ZEDLDFYBIFG67KU4UUPOS2IESICQYMSZYOY6GN5MIOUW3P",
+      "facilitatorUrl": "https://channels.openzeppelin.com/x402/testnet",
+      "status": "settled",
+      "createdAt": "2026-04-13T12:35:10.845Z"
+    },
     {
       "id": "pay_5dGgiHgllc",
       "endpoint": "/x402/scrape",
