@@ -1725,15 +1725,56 @@ body {
   grid-template-columns: 78px 1fr;
   gap: 0.85rem;
   align-items: start;
-  padding-bottom: 1.1rem;
-  border-bottom: 1px solid rgba(130, 163, 204, 0.18);
+  padding: 0.9rem 0.95rem;
+  border: 1px solid rgba(130, 163, 204, 0.2);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(12, 18, 29, 0.78), rgba(8, 12, 20, 0.64));
+  position: relative;
+  overflow: hidden;
+}
+
+.lpx-flow li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, rgba(123, 239, 255, 0.9), rgba(182, 117, 255, 0.75));
 }
 
 .lpx-flow li span {
-  color: #93b2d4;
-  font-size: 0.9rem;
-  letter-spacing: 0.13em;
+  color: #ddf6ff;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
+  width: 3.15rem;
+  height: 2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(135, 220, 255, 0.45);
+  background: rgba(85, 211, 255, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.lpx-flow li:nth-child(2)::before {
+  background: linear-gradient(180deg, rgba(218, 143, 255, 0.9), rgba(124, 200, 255, 0.76));
+}
+
+.lpx-flow li:nth-child(2) span {
+  border-color: rgba(218, 143, 255, 0.55);
+  background: rgba(207, 124, 255, 0.16);
+}
+
+.lpx-flow li:nth-child(3)::before {
+  background: linear-gradient(180deg, rgba(124, 249, 209, 0.9), rgba(112, 208, 255, 0.76));
+}
+
+.lpx-flow li:nth-child(3) span {
+  border-color: rgba(124, 249, 209, 0.55);
+  background: rgba(102, 240, 199, 0.14);
 }
 
 .lpx-flow li h3 {
@@ -1772,6 +1813,38 @@ body {
   font-size: 0.76rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.lpx-section > p::before {
+  content: "✦";
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgba(128, 236, 255, 0.5);
+  background: rgba(75, 214, 255, 0.14);
+  color: #96f1ff;
+  font-size: 0.66rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lpx-sections .lpx-section:nth-child(2) > p::before {
+  content: "◆";
+  border-color: rgba(222, 137, 255, 0.48);
+  background: rgba(205, 120, 255, 0.16);
+  color: #e6b6ff;
+}
+
+.lpx-sections .lpx-section:nth-child(3) > p::before {
+  content: "⬢";
+  border-color: rgba(126, 251, 206, 0.46);
+  background: rgba(98, 246, 192, 0.14);
+  color: #9ff8d8;
 }
 
 .lpx-section h3 {
