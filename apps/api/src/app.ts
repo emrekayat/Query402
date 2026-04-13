@@ -23,6 +23,10 @@ const allowedOrigins =
       ? []
       : defaultDevelopmentOrigins;
 
+function normalizeOrigin(origin: string) {
+  return origin.trim().replace(/\/+$/, "").toLowerCase();
+}
+
 app.use(
   cors({
     origin(origin, callback) {
@@ -31,7 +35,7 @@ app.use(
         return;
       }
 
-      if (allowedOrigins.includes(origin)) {
+      if (allowedOrigins.includes(normalizeOrigin(origin))) {
         callback(null, true);
         return;
       }

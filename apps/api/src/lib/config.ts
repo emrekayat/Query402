@@ -3,6 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 
+function normalizeOrigin(origin: string) {
+  return origin.trim().replace(/\/+$/, "").toLowerCase();
+}
+
 function loadEnv() {
   const candidates = [
     path.resolve(process.cwd(), ".env"),
@@ -50,7 +54,7 @@ export const config = {
   ...parsed.data,
   corsOrigins: (parsed.data.CORS_ORIGINS ?? "")
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => normalizeOrigin(origin))
     .filter(Boolean),
   demoMode: parsed.data.DEMO_MODE === "true"
 };
