@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import type { ProviderResultItem, QueryResult } from "@query402/shared";
 import { getProviderById } from "../lib/pricing.js";
+import { fetchGroqItems } from "../lib/groq.js";
 
 function buildNewsItems(query: string): ProviderResultItem[] {
   return [
@@ -34,6 +35,18 @@ export async function runNewsProvider(query: string, providerId: string): Promis
   const latencyMs = Math.max(180, provider.latencyEstimateMs - 90 + Math.floor(Math.random() * 350));
   await new Promise((resolve) => setTimeout(resolve, Math.min(2000, latencyMs)));
 
+  let items = buildNewsItems(query);
+  let source = provider.sourceType;
+  try {
+    const groqItems = await fetchGroqItems("news", query);
+    if (groqItems && groqItems.length > 0) {
+      items = groqItems;
+      source = "real";
+    }
+  } catch {
+    source = provider.sourceType;
+  }
+
   return {
     mode: "news",
     providerId: provider.id,
@@ -42,9 +55,9 @@ export async function runNewsProvider(query: string, providerId: string): Promis
     latencyMs,
     timestamp: new Date().toISOString(),
     traceId: `trace_${nanoid(12)}`,
-    items: buildNewsItems(query),
+    items,
     raw: {
-      source: provider.sourceType,
+      source,
       query,
       freshnessWindow: provider.id.includes("deep") ? "72h contextual" : "12h fast"
     }

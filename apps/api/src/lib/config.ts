@@ -41,6 +41,8 @@ const envSchema = z.object({
   BRAVE_API_KEY: z.string().optional(),
   SERPAPI_API_KEY: z.string().optional(),
   NEWS_API_KEY: z.string().optional(),
+  GROQ_API_KEY: z.string().optional(),
+  GROQ_MODEL: z.string().optional(),
   DEMO_MODE: z.string().optional()
 });
 
@@ -56,5 +58,6 @@ export const config = {
     .split(",")
     .map((origin) => normalizeOrigin(origin))
     .filter(Boolean),
+  groqModel: parsed.data.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile",
   demoMode: parsed.data.DEMO_MODE === "true"
 };

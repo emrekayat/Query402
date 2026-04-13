@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import type { ProviderResultItem, QueryResult } from "@query402/shared";
 import { getProviderById } from "../lib/pricing.js";
+import { fetchGroqItems } from "../lib/groq.js";
 
 function buildSearchItems(query: string): ProviderResultItem[] {
   const now = new Date().toISOString().slice(0, 10);
@@ -35,6 +36,18 @@ export async function runSearchProvider(query: string, providerId: string): Prom
   const latencyMs = Math.max(120, provider.latencyEstimateMs - 120 + Math.floor(Math.random() * 250));
   await new Promise((resolve) => setTimeout(resolve, Math.min(1700, latencyMs)));
 
+  let items = buildSearchItems(query);
+  let source = provider.sourceType;
+  try {
+    const groqItems = await fetchGroqItems("search", query);
+    if (groqItems && groqItems.length > 0) {
+      items = groqItems;
+      source = "real";
+    }
+  } catch {
+    source = provider.sourceType;
+  }
+
   return {
     mode: "search",
     providerId: provider.id,
@@ -43,9 +56,9 @@ export async function runSearchProvider(query: string, providerId: string): Prom
     latencyMs,
     timestamp: new Date().toISOString(),
     traceId: `trace_${nanoid(12)}`,
-    items: buildSearchItems(query),
+    items,
     raw: {
-      source: provider.sourceType,
+      source,
       query,
       rankingProfile: provider.id.includes("pro") ? "semantic_pro" : "fast_basic"
     }
